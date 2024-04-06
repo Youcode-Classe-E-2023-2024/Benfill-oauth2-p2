@@ -43,6 +43,7 @@ function Header() {
   };
 
   function logoutUser() {
+    document.body.classList.add("loading-indicator");
     let token = localStorage.getItem("token");
 
     fetch("http://127.0.0.1:8000/api/logout", {
@@ -58,7 +59,7 @@ function Header() {
             console.log(data);
         }
         localStorage.clear();
-        console.log(data);
+        document.body.classList.remove("loading-indicator");
         window.location.href = "/";
       });
   }
