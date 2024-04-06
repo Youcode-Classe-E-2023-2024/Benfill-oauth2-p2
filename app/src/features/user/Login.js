@@ -33,8 +33,9 @@ function Login() {
       })
         .then((response) => response.json())
         .then((data) => {
-          if (data.errors) {
+          if (data.errors || data.status === "failed") {
             setLoading(false);
+            if (data.message) return setErrorMessage(data.message);
             if (data.errors.email) return setErrorMessage(data.errors.email[0]);
             else return setErrorMessage(data.errors.password[0]);
           }
