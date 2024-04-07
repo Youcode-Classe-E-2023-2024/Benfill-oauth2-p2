@@ -14,20 +14,19 @@ export const getLeadsContent = createAsyncThunk("/leads/content", async () => {
   document.body.classList.remove("loading-indicator");
   return response.data;
 });
+async function deleteLeadAsync(leadId) {
+  document.body.classList.add("loading-indicator");
 
-export const deleteLeadAsync = createAsyncThunk(
-  "leads/deleteLead",
-  async (leadId) => {
-    const token = localStorage.getItem("token");
-    await axios.delete(`http://127.0.0.1:8000/api/users/${leadId}`, {
-      method: "delete",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return leadId; // Return the deleted leadId for handling in the reducer
-  }
-);
+  const token = localStorage.getItem("token");
+  await axios.delete(`http://127.0.0.1:8000/api/users/${leadId}`, {
+    method: "delete",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  document.body.classList.remove("loading-indicator");
+  return leadId; // Return the deleted leadId for handling in the reducer
+}
 
 export const leadsSlice = createSlice({
   name: "leads",
@@ -42,9 +41,17 @@ export const leadsSlice = createSlice({
     },
 
     deleteLead: (state, action) => {
-      let { index, user } = action.payload;
-      console.log(user);
-      state.leads.splice(index, 1);
+      let { index } = action.payload;
+      console.log(action.payload);
+      deleteLeadAsync(index.user.id)
+        .then(() => {
+          // If deletion is successful, remove the lead from the state
+          state.leads.splice(index.index, 1);
+        })
+        .catch((error) => {
+          // Handle any errors if deletion fails
+          console.error("Error deleting lead:", error);
+        });
     },
   },
 
