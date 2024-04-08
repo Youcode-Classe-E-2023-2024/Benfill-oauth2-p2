@@ -5,7 +5,7 @@ export const getLeadsContent = createAsyncThunk("/leads/content", async () => {
   document.body.classList.add("loading-indicator");
   const token = localStorage.getItem("token");
   const response = await axios.get("http://127.0.0.1:8000/api/users", {
-    method: "POST",
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -14,6 +14,25 @@ export const getLeadsContent = createAsyncThunk("/leads/content", async () => {
   document.body.classList.remove("loading-indicator");
   return response.data;
 });
+
+async function addLeadAsync(userData) {
+  document.body.classList.add("loading-indicator");
+
+  const token = localStorage.getItem("token");
+  try {
+    await axios.post(`http://127.0.0.1:8000/api/users`, userData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    document.body.classList.remove("loading-indicator");
+  } catch (error) {
+    console.error("Error adding lead:", error);
+    document.body.classList.remove("loading-indicator");
+  }
+}
+
 async function deleteLeadAsync(leadId) {
   document.body.classList.add("loading-indicator");
 
@@ -37,12 +56,12 @@ export const leadsSlice = createSlice({
   reducers: {
     addNewLead: (state, action) => {
       let { newLeadObj } = action.payload;
+      addLeadAsync(newLeadObj);
       state.leads = [...state.leads, newLeadObj];
     },
 
     deleteLead: (state, action) => {
       let { index } = action.payload;
-      console.log(action.payload);
       deleteLeadAsync(index.user.id)
         .then(() => {
           // If deletion is successful, remove the lead from the state
