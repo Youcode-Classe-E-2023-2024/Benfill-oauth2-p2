@@ -25,7 +25,8 @@ function Login() {
     else {
       setLoading(true);
       // Call API to check user credentials and save token in localstorage
-
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
       fetch("http://127.0.0.1:8000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -41,6 +42,7 @@ function Login() {
           }
           const userData = data.data;
           localStorage.setItem("token", userData.token);
+          localStorage.setItem("user", JSON.stringify(userData.user));
           setLoading(false);
           window.location.href = "/app/welcome";
         });

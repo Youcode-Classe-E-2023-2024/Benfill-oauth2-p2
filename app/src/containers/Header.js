@@ -58,7 +58,8 @@ function Header() {
         if (data.errors) {
             console.log(data);
         }
-        localStorage.clear();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         document.body.classList.remove("loading-indicator");
         window.location.href = "/";
       });

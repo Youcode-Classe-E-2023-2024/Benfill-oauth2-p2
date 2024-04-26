@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const getLeadsContent = createAsyncThunk("/leads/content", async () => {
+export const getUsersContent = createAsyncThunk("/users/content", async () => {
   document.body.classList.add("loading-indicator");
   const token = localStorage.getItem("token");
-  const response = await axios.get("http://127.0.0.1:8000/api/leads", {
+  const response = await axios.get("http://127.0.0.1:8000/api/users", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -15,12 +15,12 @@ export const getLeadsContent = createAsyncThunk("/leads/content", async () => {
   return response.data;
 });
 
-async function addLeadAsync(userData) {
+async function addUserAsync(userData) {
   document.body.classList.add("loading-indicator");
 
   const token = localStorage.getItem("token");
   try {
-    await axios.post(`http://127.0.0.1:8000/api/leades`, userData, {
+    await axios.post(`http://127.0.0.1:8000/api/users`, userData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -33,11 +33,11 @@ async function addLeadAsync(userData) {
   }
 }
 
-async function deleteLeadAsync(leadId) {
+async function deleteUserAsync(leadId) {
   document.body.classList.add("loading-indicator");
 
   const token = localStorage.getItem("token");
-  await axios.delete(`http://127.0.0.1:8000/api/users/${leadId}`, {
+  await axios.delete(`http://127.0.0.1:8000/api/leads/${leadId}`, {
     method: "delete",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -47,22 +47,22 @@ async function deleteLeadAsync(leadId) {
   return leadId; // Return the deleted leadId for handling in the reducer
 }
 
-export const leadsSlice = createSlice({
-  name: "leads",
+export const usersSlice = createSlice({
+  name: "users",
   initialState: {
     isLoading: false,
-    leads: [],
+    users: [],
   },
   reducers: {
-    addNewLead: (state, action) => {
+    addNewUser: (state, action) => {
       let { newLeadObj } = action.payload;
-      addLeadAsync(newLeadObj);
-      state.leads = [...state.leads, newLeadObj];
+      addUserAsync(newLeadObj);
+      state.users = [...state.users, newLeadObj];
     },
 
-    deleteLead: (state, action) => {
+    deleteUser: (state, action) => {
       let { index } = action.payload;
-      deleteLeadAsync(index.user.id)
+      deleteUserAsync(index.user.id)
         .then(() => {
           // If deletion is successful, remove the lead from the state
           state.leads.splice(index.index, 1);
@@ -76,19 +76,19 @@ export const leadsSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(getLeadsContent.pending, (state) => {
+      .addCase(getUsersContent.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getLeadsContent.fulfilled, (state, action) => {
+      .addCase(getUsersContent.fulfilled, (state, action) => {
         state.leads = action.payload.data;
         state.isLoading = false;
       })
-      .addCase(getLeadsContent.rejected, (state) => {
+      .addCase(getUsersContent.rejected, (state) => {
         state.isLoading = false;
       });
   },
 });
 
-export const { addNewLead, deleteLead } = leadsSlice.actions;
+export const { addNewUser, deleteUser } = usersSlice.actions;
 
-export default leadsSlice.reducer;
+export default usersSlice.reducer;

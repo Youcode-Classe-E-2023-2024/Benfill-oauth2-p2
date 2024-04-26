@@ -48,6 +48,7 @@ const handleAuthError = (error) => {
   if (error.response && error.response.status === 401) {
     localStorage.clear();
     redirectTo("/login");
+
   } else if (error.response && error.response.status === 403) {
     redirectTo("/home");
   } else {
@@ -55,6 +56,7 @@ const handleAuthError = (error) => {
     console.error("An error occurred:", error.message);
     localStorage.clear();
     redirectTo("/login");
+
     // Optionally, display an error message to the user
   }
 };

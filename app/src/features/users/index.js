@@ -3,8 +3,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TitleCard from "../../components/Cards/TitleCard";
 import { openModal } from "../common/modalSlice";
-import { deleteLead, getLeadsContent } from "./leadSlice";
-import { Tooltip } from "flowbite-react";
+import { deleteUser, getUsersContent } from "./userSlice";
 import {
   CONFIRMATION_MODAL_CLOSE_TYPES,
   MODAL_BODY_TYPES,
@@ -41,7 +40,7 @@ function Leads() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getLeadsContent());
+    dispatch(getUsersContent());
   }, []);
 
   const getDummyStatus = (index) => {
@@ -81,66 +80,42 @@ function Leads() {
           <table className="table w-full">
             <thead>
               <tr>
-                <th>Id</th>
-                <th>Company Name</th>
-                <th>Activity</th>
-                <th>Address</th>
-                <th>Capital</th>
-                <th>Legal Form</th>
-                <th>Creation Delay</th>
-                <th>Manager Full Name</th>
-                <th>Manager Gender</th>
-                <th>Manager Email</th>
-                <th>Manager Phone</th>
-                <th>Accountant</th>
-                <th>Non Partner Manager</th>
-                <th className="px-20 text-center">Needs</th>
+                <th>Name</th>
+                <th>Email Id</th>
                 <th>Created At</th>
+                <th>Status</th>
+                <th>Role</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {leads.length === 0 && (
-                <tr className="flex justify-center w-full">
-                  <td>
-                    <p className="text-center">List is Empty</p>
-                  </td>
-                </tr>
-              )}
-              {leads.map((lead, index) => {
-                console.log(lead);
+              {leads.map((l, k) => {
                 return (
-                  <tr key={index} className="">
-                    <td className="text-center">{lead.id}</td>
-                    <td className="text-center">{lead.companyName ? lead.companyName : "none"}</td>
-                    <td className="text-center">{lead.activity ? lead.activity : "none"}</td>
-                    <td className="text-center">{lead.address ? lead.address : "none"}</td>
-                    <td className="text-center">{lead.capital ? lead.capital : "none"}</td>
-                    <td className="text-center">{lead.legalForm ? lead.legalForm : "none"}</td>
-                    <td className="text-center">{lead.creationDelay ? lead.creationDelay : "none"}</td>
-                    <td className="text-center">
-                      {lead.managerFullName ? lead.managerFullName : "none"}
+                  <tr key={k}>
+                    <td>
+                      <div className="flex items-center space-x-3">
+                        <div className="avatar">
+                          <div className="mask mask-squircle w-12 h-12">
+                            <img src={l.avatar} alt="Avatar" />
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-bold">{l.name}</div>
+                        </div>
+                      </div>
                     </td>
-                    <td className="text-center">{lead.managerGender ? lead.managerGender : "none"}</td>
-                    <td className="text-center">{lead.managerEmail ? lead.managerEmail : "none"}</td>
-                    <td className="text-center">{lead.managerPhone ? lead.managerPhone : "none"}</td>
-                    <td className="text-center">{lead.accountant ? lead.accountant : "none"}</td>
-                    <td className="text-center">
-                      {lead.nonPartnerManager ? lead.nonPartnerManager : "none"}
+                    <td>{l.email}</td>
+                    <td>
+                      {moment(new Date())
+                        .add(-5 * (k + 2), "days")
+                        .format("DD MMM YY")}
                     </td>
-                    <Tooltip content={lead.needs ? lead.needs : "none"}>
-                      <td className="text-center">
-                        {lead.needs.substr(0, 10)}...
-                        <span className="text-blue-500 font-bold text-[10px]">
-                          (Hover To see More)
-                        </span>
-                      </td>
-                    </Tooltip>
-                    <td>{lead.createdAt}</td>
+                    <td>{getDummyStatus(k)}</td>
+                    <td>{l.roles[0].role_name}</td>
                     <td>
                       <button
                         className="btn btn-square btn-ghost"
-                        onClick={() => deleteCurrentLead(index, lead)}
+                        onClick={() => deleteCurrentLead(k, l)}
                       >
                         <TrashIcon className="w-5" />
                       </button>
